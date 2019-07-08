@@ -1,0 +1,31 @@
+{mapping, "emqx.redis.init_nodes", "eredis_cluster.init_nodes", [
+  {datatype, string}
+]}.
+
+{mapping, "emqx.redis.pool_size", "eredis_cluster.pool_size", [
+  {datatype, integer},
+  {default, 5}
+]}.
+
+{mapping, "emqx.redis.pool_max_overflow", "eredis_cluster.pool_max_overflow", [
+  {datatype, integer},
+  {default, 0}
+]}.
+
+{mapping, "emqx.redis.database", "eredis_cluster.database", [
+  {datatype, integer},
+  {default, 0}
+]}.
+
+{mapping, "emqx.redis.password", "eredis_cluster.password", [
+  {datatype, string}
+]}.
+
+{translation, "eredis_cluster.init_nodes", fun(Conf) ->
+  Cluster = cuttlefish:conf_get("emqx.redis.init_nodes", Conf),
+  ClusterList = string:split(Cluster, ",", all),
+        lists:map(fun(X)->
+          [Host, Port] = string:tokens(X, ":"),
+          {string:trim(Host), list_to_integer(string:trim(Port))}
+        end, ClusterList)
+end}.
